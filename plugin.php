@@ -4,7 +4,7 @@
   Plugin URI: http://www.iaps.ca/wordpress-plugins/debug-printr/
   Description: Useage: debug::print_r($obj) in template.
   Author: Brett Farrell
-  Version: 1.1.0
+  Version: 1.1.1
   Author URI: http://www.iaps.ca/wordpress-plugins/
  */
 
@@ -34,8 +34,9 @@ if (is_admin()) {
             <textarea name="ips"><?= implode("\r\n", json_decode(get_option(debug::OPTION))) ?></textarea>
             <input type="submit" class="button button-primary button-large" name="debug-printr" value="<?= __('Save') ?>" />
         </form>
+        <p>Your IP: <strong><?= $_SERVER['REMOTE_ADDR'] ?></strong></p>
         <p>Debugging Enabled? <strong><?= var_export(debug::enabled(), true) ?></strong></p>
-        <p>Usage: <pre>debug::print_r($obj);</pre></p>
+        <p>Usage: <pre>&lt;?php debug::print_r($var); ?&gt;</pre></p>
         <?php
     }
 
@@ -115,10 +116,10 @@ class debug {
     public static function enabled() {
         $ips = (array) json_decode(get_option(debug::OPTION));
         foreach ($ips as &$ip):
-            if (filter_var($ip, FILTER_VALIDATE_IP))
-                continue;
             if (filter_var(gethostbyname($ip), FILTER_VALIDATE_IP))
                 $ip = gethostbyname($ip);
+            if (filter_var($ip, FILTER_VALIDATE_IP))
+                continue;
         endforeach;
         if (in_array($_SERVER["REMOTE_ADDR"], $ips))
             return true;
