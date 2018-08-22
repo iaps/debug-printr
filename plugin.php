@@ -11,7 +11,7 @@
 if (is_admin()) {
 
     /**
-     * Add our menu item under WooCommerce
+     * Add our menu item under Settings
      */
     function debug_plugin_menu() {
         add_options_page('Debug PrintR', 'Debug PrintR', 'manage_options', 'debug-printr', 'debug_admin');
