@@ -8,6 +8,7 @@
   Author URI: http://www.iaps.ca/wordpress-plugins/
  */
 
+<<<<<<< HEAD
 if (is_admin()) {
 
     /**
@@ -23,6 +24,35 @@ if (is_admin()) {
      * Main plugin page.  Just a button; kiss.
      */
     function debug_admin() {
+=======
+class debug {
+
+    const OPTION = 'debug_ips';
+	
+	function __construct() {
+		if (!is_admin())
+			return;
+		// set defaults
+		register_activation_hook(__FILE__, [$this, 'activate']);
+		// Add our menu item
+		add_action('admin_menu', [$this, 'plugin_menu']);
+		// Add Plugin-Page Links: Settings
+		add_filter('plugin_action_links_' . plugin_basename(__FILE__), [$this, 'add_action_links']);
+		// check post
+		add_action('admin_init', [$this, 'check_post'], 10, 0);
+	}
+
+    function activate() {
+        if (!get_option(self::OPTION))
+            update_option(self::OPTION, json_encode(array("127.0.0.1", $_SERVER['REMOTE_ADDR'])));
+    }
+	
+    function plugin_menu() {
+        add_options_page('Debug PrintR', 'Debug PrintR', 'manage_options', 'debug-printr', [$this, 'admin_settings']);
+    }
+	
+	function admin_settings() {
+>>>>>>> pushed functions into class, tested.
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
@@ -34,6 +64,7 @@ if (is_admin()) {
             <textarea name="ips"><?= implode("\r\n", json_decode(get_option(debug::OPTION))) ?></textarea>
             <input type="submit" class="button button-primary button-large" name="debug-printr" value="<?= __('Save') ?>" />
         </form>
+<<<<<<< HEAD
         <p>Debugging Enabled? <strong><?= var_export(debug::enabled(), true) ?></strong></p>
         <p>Usage: <pre>debug::print_r($obj);</pre></p>
         <?php
@@ -43,6 +74,15 @@ if (is_admin()) {
      * Determines if Save button has been clicked ($_POST).
      */
     function debug_check_post() {
+=======
+        <p>Your IP: <strong><?= $_SERVER['REMOTE_ADDR'] ?></strong></p>
+        <p>Debugging Enabled? <strong><?= var_export(debug::enabled(), true) ?></strong></p>
+        <p>Usage: <pre>&lt;?php debug::print_r($var); ?&gt;</pre></p>
+        <?php
+    }
+	
+    function check_post() {
+>>>>>>> pushed functions into class, tested.
         if (array_key_exists('debug-printr', $_POST) && strstr($_SERVER['REQUEST_URI'], '?page=debug-printr')):
             if (!array_key_exists('debug_printr_save_ips', $_POST) || !wp_verify_nonce($_POST['debug_printr_save_ips'], 'action_debug_printr_save_ips'))
                 return;
@@ -53,6 +93,7 @@ if (is_admin()) {
                     unset($ips[$i]);
             endfor;
             $ips = array_values($ips);
+<<<<<<< HEAD
             if (json_decode(get_option(debug::OPTION)) !== $ips)
                 update_option(debug::OPTION, json_encode($ips));
         endif;
@@ -64,10 +105,19 @@ if (is_admin()) {
     add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'debug_add_action_links');
 
     function debug_add_action_links($links) {
+=======
+            if (json_decode(get_option(self::OPTION)) !== $ips)
+                update_option(self::OPTION, json_encode($ips));
+        endif;
+    }
+	
+    function add_action_links($links) {
+>>>>>>> pushed functions into class, tested.
         // merge in our links first so they show first
         return array_merge(array('<a href="' . admin_url('admin.php?page=debug-printr') . '">Settings</a>'), $links);
     }
 
+<<<<<<< HEAD
     function debug_activate() {
         if (!get_option(debug::OPTION))
             update_option(debug::OPTION, json_encode(array("127.0.0.1", $_SERVER['REMOTE_ADDR'])));
@@ -80,6 +130,8 @@ class debug {
 
     const OPTION = 'debug_ips';
 
+=======
+>>>>>>> pushed functions into class, tested.
     /**
      * Prints $obj data to the screen.
      * @param mixed $obj The variable you want to print_r.
@@ -113,7 +165,11 @@ class debug {
      * @return boolean
      */
     public static function enabled() {
+<<<<<<< HEAD
         $ips = (array) json_decode(get_option(debug::OPTION));
+=======
+        $ips = (array) json_decode(get_option(self::OPTION));
+>>>>>>> pushed functions into class, tested.
         foreach ($ips as &$ip):
             if (filter_var($ip, FILTER_VALIDATE_IP))
                 continue;
@@ -126,3 +182,8 @@ class debug {
     }
 
 }
+<<<<<<< HEAD
+=======
+
+$debug_printr = new debug();
+>>>>>>> pushed functions into class, tested.
